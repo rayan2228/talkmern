@@ -14,7 +14,7 @@ import {
 } from "firebase/auth";
 import { LineWave } from "react-loader-spinner";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const auth = getAuth();
@@ -53,13 +53,22 @@ const Login = () => {
       setLoading(true);
       signInWithEmailAndPassword(auth, regData.email, regData.password)
         .then((userCredential) => {
+          console.log(userCredential.user.emailVerified);
           setLoading(false);
-          toast.success("Login Successful", {
-            position: "bottom-center",
-            autoClose: 5000,
-            theme: "dark",
-          });
-          navigate("/home");
+          if (!userCredential.user.emailVerified) {
+            toast.error("Please verify your email first", {
+              position: "bottom-center",
+              autoClose: 5000,
+              theme: "dark",
+            });
+          } else {
+            toast.success("Login Successful", {
+              position: "bottom-center",
+              autoClose: 5000,
+              theme: "dark",
+            });
+            navigate("/home/feed");
+          }
         })
         .catch((error) => {
           setLoading(false);
@@ -124,6 +133,11 @@ const Login = () => {
               ariaLabel="line-wave-loading"
             />
           )}
+          <br />
+          <Link to="/forgotpass">Forgot Password?</Link>
+          <p>
+            Don't have an account? <Link to="/">Create account</Link>{" "}
+          </p>
         </div>
       </Grid>
       <Grid xs={6}>

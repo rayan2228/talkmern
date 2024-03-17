@@ -10,10 +10,14 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { LineWave } from "react-loader-spinner";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
+import Glogin from "../assets/Google.png";
 
 const Registration = () => {
   const auth = getAuth();
@@ -56,6 +60,7 @@ const Registration = () => {
       setLoading(true);
       createUserWithEmailAndPassword(auth, regData.email, regData.password)
         .then((userCredential) => {
+          console.log(userCredential);
           setLoading(false);
           sendEmailVerification(auth.currentUser).then(() => {
             toast.success(
@@ -82,11 +87,28 @@ const Registration = () => {
     }
   };
 
+  let handleGlogin = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        toast.success("Registration Successful", {
+          position: "bottom-center",
+          autoClose: 5000,
+          theme: "dark",
+        });
+        navigate("/home/feed");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <Grid container spacing={4}>
       <Grid xs={6}>
         <div className="regbox">
           <h1 style={{ marginTop: "150px" }}>
+            <img onClick={handleGlogin} src={Glogin} /> <br />
             Get started with easily register
           </h1>
           <p>Free register and you can enjoy it</p>
@@ -147,6 +169,10 @@ const Registration = () => {
               ariaLabel="line-wave-loading"
             />
           )}
+
+          <p>
+            Alredy have an account? <Link to="/login">Login</Link>{" "}
+          </p>
         </div>
       </Grid>
       <Grid xs={6}>
@@ -157,5 +183,3 @@ const Registration = () => {
 };
 
 export default Registration;
-
-
