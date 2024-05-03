@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useSelector } from "react-redux";
 
 const Home = () => {
+  let data = useSelector((state) => state?.user?.value);
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    if (!data?.email) {
+      navigate("/login");
+    }
+  }, []);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import LoadingButton from "@mui/lab/LoadingButton";
 import Grid from "@mui/material/Grid";
 import bannerReg from "../assets/bannerreg.png";
@@ -15,10 +15,20 @@ import {
 import { LineWave } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { activeUser } from "../Slices/userSlice";
 
 const Login = () => {
   const auth = getAuth();
   let navigate = useNavigate();
+  let diapatch = useDispatch();
+  let data = useSelector((state) => state?.user?.value);
+
+  useEffect(() => {
+    if (data?.email) {
+      navigate("/home/feed");
+    }
+  });
 
   let [regData, setRegData] = useState({
     email: "",
@@ -55,20 +65,22 @@ const Login = () => {
         .then((userCredential) => {
           console.log(userCredential.user.emailVerified);
           setLoading(false);
-          if (!userCredential.user.emailVerified) {
-            toast.error("Please verify your email first", {
-              position: "bottom-center",
-              autoClose: 5000,
-              theme: "dark",
-            });
-          } else {
+          // if (!userCredential.user.emailVerified) {
+          //   toast.error("Please verify your email first", {
+          //     position: "bottom-center",
+          //     autoClose: 5000,
+          //     theme: "dark",
+          //   });
+          // } else {
             toast.success("Login Successful", {
               position: "bottom-center",
               autoClose: 5000,
               theme: "dark",
             });
+            localStorage.setItem("user", JSON.stringify(userCredential.user));
+            diapatch(activeUser(userCredential.user));
             navigate("/home/feed");
-          }
+          // }
         })
         .catch((error) => {
           setLoading(false);

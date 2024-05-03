@@ -12,6 +12,7 @@ import {
   sendEmailVerification,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
 } from "firebase/auth";
 import { LineWave } from "react-loader-spinner";
 import { toast } from "react-toastify";
@@ -19,8 +20,11 @@ import { useNavigate, Link } from "react-router-dom";
 
 import Glogin from "../assets/Google.png";
 
+import { getDatabase, ref, set } from "firebase/database";
+
 const Registration = () => {
   const auth = getAuth();
+  const db = getDatabase();
   let navigate = useNavigate();
 
   let [regData, setRegData] = useState({
@@ -61,18 +65,36 @@ const Registration = () => {
       createUserWithEmailAndPassword(auth, regData.email, regData.password)
         .then((userCredential) => {
           console.log(userCredential);
-          setLoading(false);
-          sendEmailVerification(auth.currentUser).then(() => {
-            toast.success(
-              "Registration Successful, Please check your email for verification",
-              {
-                position: "bottom-center",
-                autoClose: 5000,
-                theme: "dark",
-              }
-            );
-            navigate("/login");
-          });
+          updateProfile(auth.currentUser, {
+            displayName: regData.name,
+            photoURL:
+              "https://firebasestorage.googleapis.com/v0/b/talkmern.appspot.com/o/avatar%2Fistockphoto-1300845620-612x612.jpg?alt=media&token=fc1820f4-91b3-47f9-b71b-848ee791f2ad",
+          })
+            .then(() => {
+              set(ref(db, "users/" + userCredential.user.uid), {
+                username: regData.name,
+                email: regData.email,
+                photoURL: userCredential.user.photoURL,
+              });
+            })
+            .then(() => {
+              setLoading(false);
+              sendEmailVerification(auth.currentUser).then(() => {
+                toast.success(
+                  "Registration Successful, Please check your email for verification",
+                  {
+                    position: "bottom-center",
+                    autoClose: 5000,
+                    theme: "dark",
+                  }
+                );
+                navigate("/login");
+              });
+            })
+            .catch((error) => {
+              setLoading(false);
+              console.log(error);
+            });
 
           console.log("usercreated", userCredential);
         })
