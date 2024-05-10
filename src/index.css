@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
 }
+
 .bannerImage {
   width: 100%;
   height: 100vh;
@@ -12,6 +13,7 @@
   width: 491px;
   margin-left: auto;
 }
+
 .passwordeye {
   position: relative;
   width: 90%;
@@ -98,6 +100,7 @@
   padding: 10px;
   box-sizing: border-box;
 }
+
 .img-preview {
   overflow: hidden;
 }
@@ -130,4 +133,14 @@
 
 .box:last-child {
   border-bottom: 0;
+}
+
+.relative {
+  position: relative;
+}
+
+.grpcreate {
+  width: 100%;
+  height: 100%;
+  background-color: #6e6e705b;
 }

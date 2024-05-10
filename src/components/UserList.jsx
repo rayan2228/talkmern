@@ -14,8 +14,6 @@ const UserList = () => {
 
   let userInfo = useSelector((state) => state.user.value);
 
-  console.log();
-
   useEffect(() => {
     const userRef = ref(db, "users");
     onValue(userRef, (snapshot) => {
